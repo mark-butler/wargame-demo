@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</script><title>Wargame Demo</title>
+<meta name="keywords" content="military, military analysis, wargame" />
+<link rel="SHORTCUT ICON" HREF="icon.ico">
+<link rel="stylesheet" href="screen.css" type="text/css" media="screen,print" />
+</head>
+<body>
+	<header id="mainHeader">
+		<p>Wargame Demo</p>
+	</header>
+	<div><p>This demo displays the pixel coordinates of the mouse.  <br />Then calculates the hexagon center pixel coordinates.  <br />Then calculates the hexagon grid coordinates.  <br />Then calcualtes the hexagon name.</p></div>
+	<div id="info">&nbsp;</div>
+	<section id="battlefieldSection">
+		<img id="wargameMap" alt="map" class="map" src="map.png" onmousemove="mapMouseMove(event)" style="position: absolute; visibility: visible; z-index: 0;"/>
+		<div id="textCursor" style="position: absolute; width: 360px;visibility: visible; z-index: 100;"></div>
+	</section>
+	<footer>
+	</footer>
+
+<!-- library -->
+<script type="text/javascript" src="hexagonLibraryFlat.js"></script>
+<!-- wargame calculators  -->
+<script type="text/javascript" src="hexagonNameCalculator.js"></script>
+
+<script>
+function mapMouseMove(event){
+	var battlefieldDiv;
+	battlefieldDiv = event.target.parentNode;
+
+	var mapPixelX;
+	var mapPixelY;
+
+	// get pixel coordinates
+	if (document.addEventListener) {
+		mapPixelX = event.pageX - battlefieldDiv.offsetLeft;
+		mapPixelY = event.pageY - battlefieldDiv.offsetTop;
+	}
+	// this for IE browsers
+	else {
+		mapPixelX =	event.offsetX;
+		mapPixelY =	event.offsetY;
+	}
+
+	var hexagonMapCalculator;
+	var map = {"hexagonGridDimentions":{"hexagonWidth":48,"hexagonHeight":40,"hexagonGridOffsetX":18,"hexagonGridOffsetY":20},"mapViewPort":{"displayMinX":4,"displayMinY":8,"displayMaxX":12,"displayMaxY":24,"imageMinX":0,"imageMinY":0,"imageMaxX":14,"imageMaxY":26}};
+	hexagonMapCalculator = new HexagonMapCalculator(map);
+	hexagonMapCalculator.setMapPixelXY(mapPixelX, mapPixelY);
+	var hexagonPoint = hexagonMapCalculator.getHexagonPoint();
+
+	hexagonMapCalculator.setHexagonPointXY(hexagonPoint.getX(), hexagonPoint.getY());
+	var hexagonPixel = hexagonMapCalculator.getMapPixel();
+
+	var hexagonNameCalculator = new HexagonNameCalculator(map);
+	hexagonNameCalculator.setXY(hexagonPoint.getX(), hexagonPoint.getY());
+	var hexagonName = hexagonNameCalculator.getName(map);
+	var hexagonDisplayName = hexagonNameCalculator.getDisplayName(map);
+
+	var info = document.getElementById("info");
+	info.innerHTML = "(" + mapPixelX.toString() + ", " + mapPixelY.toString() + ")";
+	info.innerHTML += " &rarr; ";
+	info.innerHTML += "[" + hexagonPixel.getX().toString() + ", " + hexagonPixel.getY().toString() + "]";
+	info.innerHTML += " &rarr; ";
+	info.innerHTML += "<" + hexagonPoint.getX().toString() + ", " + hexagonPoint.getY().toString() + ">";
+	info.innerHTML += " &rarr; ";
+	info.innerHTML += hexagonName;
+
+	var textCursor = document.getElementById("textCursor");
+	textCursor.innerHTML = hexagonDisplayName;
+	textCursor.style.textShadow = "-1px 0 white, 0 1px white, 1px 0 white, 0 -1px white";
+	textCursor.style.textAlign="left";
+	textCursor.style.left = (mapPixelX + 10) + "px";
+	textCursor.style.top = (mapPixelY - 10) + "px";
+	}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
